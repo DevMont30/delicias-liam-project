@@ -1,0 +1,20 @@
+{% for producto in productos %}
+<div class="col-md-4 mb-4">
+<div class="card shadow">
+
+<div class="card-body">
+<h5>{{ producto.nombre }}</h5>
+<p>{{ producto.descripcion }}</p>
+<p><strong>$ {{ producto.precio }}</strong></p>
+<a href="{% url 'agregar' producto.id %}" class="btn btn-danger w-100">Agregar al carrito</a>
+</div>
+
+</div>
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+</body>
+</html>
