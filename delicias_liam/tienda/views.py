@@ -82,3 +82,8 @@ def finalizar_compra(request):
     request.session['carrito'] = {}
     
     return render(request, 'compra_exitosa.html')
+
+@login_required
+def mis_pedidos(request):
+    pedidos=Pedido.objects.filter(usuario=request.user).order_by('-fecha')
+    return render(request, 'mis_pedidos.html',{'pedidos':pedidos})
