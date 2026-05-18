@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carrito</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+<h1>Carrito de Compras</h1>
+
+<table class="table">
+<tr>
+<th>Producto</th>
+<th>Cantidad</th>
+<th>Subtotal</th>
+<th></th>
+</tr>
+
+{% for item in productos %}
+<tr>
+<td>{{ item.producto.nombre }}</td>
+<td>{{ item.cantidad }}</td>
+<td>$ {{ item.subtotal }}</td>
+<td>
+<a href="{% url 'eliminar' item.producto.id %}" class="btn btn-danger btn-sm">
+Eliminar
+</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Total: $ {{ total }}</h3>
+
+<a href="{% url 'finalizar' %}" class="btn btn-primary">Finalizar Compra</a>
+
+<a href="/" class="btn btn-secondary">Seguir comprando</a>
+
+</div>
+
+</body>
+</html>
