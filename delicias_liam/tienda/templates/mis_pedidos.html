@@ -24,6 +24,11 @@
 <td>$ {{ pedido.total }}</td>
 <td>{{ pedido.fecha }}</td>
 <td>{{ pedido.estado }}</td>
+<td>
+<a href="{% url 'factura' pedido.id %}" class="btn btn-primary btn-sm">
+Descargar PDF
+</a>
+</td>
 </tr>
 {% empty %}
 <tr>

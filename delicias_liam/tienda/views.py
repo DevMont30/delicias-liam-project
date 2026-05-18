@@ -2,6 +2,9 @@ from django.shortcuts import redirect, render
 from .models import Producto, Pedido
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import letter
 
 # Vista de home
 
@@ -83,7 +86,44 @@ def finalizar_compra(request):
     
     return render(request, 'compra_exitosa.html')
 
+# Vista de pedidos
+
 @login_required
 def mis_pedidos(request):
     pedidos=Pedido.objects.filter(usuario=request.user).order_by('-fecha')
     return render(request, 'mis_pedidos.html',{'pedidos':pedidos})
+
+# Generacion factura PDF
+
+def generar_factura(request, pedido_id):
+
+    pedido = Pedido.objects.get(id=pedido_id)
+    
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="factura_{pedido.id}.pdf"'
+   
+    pdf = canvas.Canvas(response, pagesize=letter)
+   
+    pdf.setTitle("Factura Delicias Liam")
+ 
+    pdf.setFont("Helvetica-Bold", 18)
+    pdf.drawString(180, 750, "DELICIAS LIAM")
+    
+    pdf.setFont("Helvetica", 12)
+
+    pdf.drawString(50, 700, f"Factura #: {pedido.id}")
+    pdf.drawString(50, 680, f"Cliente: {pedido.usuario.username}")
+    pdf.drawString(50, 660, f"Fecha: {pedido.fecha.strftime('%d/%m/%Y %H:%M')}")
+    pdf.drawString(50, 640, f"Estado: {pedido.estado}")
+  
+    pdf.line(50, 620, 550, 620)
+
+    pdf.setFont("Helvetica-Bold", 14)
+    pdf.drawString(50, 590, f"TOTAL PAGADO: $ {pedido.total}")
+
+    pdf.setFont("Helvetica", 11)
+    pdf.drawString(50, 540, "Gracias por comprar en Delicias Liam")
+
+    pdf.save()
+
+    return response
