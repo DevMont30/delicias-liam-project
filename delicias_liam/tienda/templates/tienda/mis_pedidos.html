@@ -1,0 +1,29 @@
+{% extends 'base.html' %}{% load tienda_extras %}
+{% block titulo %}Mis pedidos | Delicias Liam{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+  <h1 class="mb-4">Mis pedidos</h1>
+  {% if pedidos %}
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead><tr><th>Pedido</th><th>Fecha</th><th>Productos</th><th>Total</th><th>Estado</th><th></th></tr></thead>
+      <tbody>
+      {% for p in pedidos %}
+        <tr>
+          <td><a href="{% url 'pedido' p.id %}" class="fw-bold">#{{ p.id }}</a></td>
+          <td>{{ p.fecha|date:"d/m/Y H:i" }}</td>
+          <td>{{ p.detalles.all|length }}</td>
+          <td>{{ p.total|cop }}</td>
+          <td><span class="estado estado-{{ p.estado }}">{{ p.get_estado_display }}</span></td>
+          <td class="text-end"><a href="{% url 'pedido' p.id %}" class="btn btn-sm btn-dl-borde">Ver detalle</a>
+            <a href="{% url 'factura' p.id %}" class="btn btn-sm btn-link">Descargar PDF</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="resumen text-center"><p class="mb-3">Aún no tienes pedidos.</p><a class="btn btn-dl" href="{% url 'home' %}">Ver productos</a></div>
+  {% endif %}
+</div>
+{% endblock %}

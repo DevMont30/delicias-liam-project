@@ -1,0 +1,13 @@
+<div class="mb-3">
+  {% if campo.field.widget.input_type == 'checkbox' %}
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="{{ campo.html_name }}" id="{{ campo.id_for_label }}" {% if campo.value %}checked{% endif %}>
+    <label class="form-check-label" for="{{ campo.id_for_label }}">{{ campo.label }}{% if extra %} {{ extra|safe }}{% endif %}</label>
+  </div>
+  {% else %}
+  <label class="form-label" for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+  {{ campo }}
+  {% endif %}
+  {% if campo.help_text %}<div class="form-text">{{ campo.help_text|safe }}</div>{% endif %}
+  {{ campo.errors }}
+</div>

@@ -1,0 +1,59 @@
+{% extends 'base.html' %}{% load tienda_extras %}
+{% block titulo %}Panel | Delicias Liam{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="mb-0">Panel del negocio</h1>
+    <div class="d-flex gap-2">
+      {% if perms.tienda.ver_reportes %}<a class="btn btn-dl-borde" href="{% url 'reportes' %}">Reportes de ventas</a>{% endif %}
+      <a class="btn btn-dl" href="{% url 'admin:index' %}">Administración</a>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    {% for valor, etiqueta, n in por_estado %}
+    <div class="col-6 col-md-4 col-lg-2">
+      <a class="d-block panel-dl text-decoration-none h-100" href="{% url 'admin:tienda_pedido_changelist' %}?estado__exact={{ valor }}">
+        <div class="fs-2 fw-bold text-body">{{ n }}</div><span class="estado estado-{{ valor }}">{{ etiqueta }}</span>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="panel-dl h-100">
+        <h2 class="h4">Pagos por verificar</h2>
+        {% for pago in pagos_por_verificar %}
+          <div class="d-flex justify-content-between border-bottom py-2">
+            <span>Pedido #{{ pago.pedido_id }} · {{ pago.pedido.usuario.get_full_name|default:pago.pedido.usuario.username }}</span>
+            <a href="{% url 'admin:tienda_pago_change' pago.id %}">{{ pago.monto|cop }} · revisar</a>
+          </div>
+        {% empty %}<p class="text-muted mb-0">No hay comprobantes pendientes.</p>{% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="panel-dl h-100">
+        <h2 class="h4">Alertas de inventario</h2>
+        {% for p in stock_bajo %}
+          <div class="d-flex justify-content-between border-bottom py-2">
+            <span>{{ p.nombre }}</span>
+            <a href="{% url 'admin:tienda_movimientoinventario_add' %}?producto={{ p.id }}">{% if p.stock <= 0 %}Agotado{% else %}Quedan {{ p.stock }}{% endif %} · reponer</a>
+          </div>
+        {% empty %}<p class="text-muted mb-0">Todos los productos tienen stock suficiente.</p>{% endfor %}
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="panel-dl">
+        <h2 class="h4">Entregas programadas para hoy</h2>
+        {% for p in pedidos_hoy %}
+          <div class="d-flex justify-content-between border-bottom py-2">
+            <span>#{{ p.id }} · {{ p.nombre_recibe }} · {{ p.direccion_entrega }}</span>
+            <span class="estado estado-{{ p.estado }}">{{ p.get_estado_display }}</span>
+          </div>
+        {% empty %}<p class="text-muted mb-0">No hay entregas programadas para hoy.</p>{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

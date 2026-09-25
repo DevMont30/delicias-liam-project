@@ -1,0 +1,11 @@
+# Entorno y archivos generados
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+staticfiles/
+
+# Base de datos local y archivos subidos por clientes
+*.sqlite3
+delicias_liam/media/comprobantes/

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block contenido %}
+{% if not filtros_activos and pagina.number == 1 %}
+<section class="portada py-5">
+  <div class="container">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-6">
+        <h1 class="mb-3">Postres y detalles para celebrar a quien quieres</h1>
+        <p class="lead mb-4">Elige, personaliza el mensaje y recibe tu pedido en Bogotá en la fecha que necesites.</p>
+        <form class="buscador d-flex" method="get" role="search">
+          <label class="visually-hidden" for="q">Buscar productos</label>
+          <input id="q" class="form-control" type="search" name="q" placeholder="Busca cheesecake, brownies, tortas…">
+          <button class="btn btn-dl" type="submit">Buscar</button>
+        </form>
+      </div>
+      <div class="col-lg-6">
+        <div class="collage">
+          {% for p in pagina|slice:":3" %}{% if p.imagen %}<img src="{{ p.imagen.url }}" alt="{{ p.nombre }}">{% endif %}{% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<div class="container mt-5">
+  {% if categorias_menu %}
+  <nav class="chips mb-4" aria-label="Categorías">
+    <a class="chip {% if not categoria_actual %}activa{% endif %}" href="{% url 'home' %}">Todo</a>
+    {% for c in categorias_menu %}
+    <a class="chip {% if categoria_actual == c %}activa{% endif %}" href="?categoria={{ c.slug }}">{{ c.nombre }}</a>
+    {% endfor %}
+  </nav>
+  {% endif %}
+
+  <form method="get" class="row g-2 align-items-end mb-4">
+    {% if categoria_actual %}<input type="hidden" name="categoria" value="{{ categoria_actual.slug }}">{% endif %}
+    <div class="col-12 col-md-4"><label class="form-label small" for="f-q">Buscar</label>
+      <input id="f-q" class="form-control" type="search" name="q" value="{{ q }}" placeholder="Nombre o ingrediente"></div>
+    <div class="col-6 col-md-2"><label class="form-label small" for="f-min">Precio desde</label>
+      <input id="f-min" class="form-control" type="number" min="0" step="500" name="precio_min" value="{{ request.GET.precio_min }}"></div>
+    <div class="col-6 col-md-2"><label class="form-label small" for="f-max">Precio hasta</label>
+      <input id="f-max" class="form-control" type="number" min="0" step="500" name="precio_max" value="{{ request.GET.precio_max }}"></div>
+    <div class="col-8 col-md-2"><label class="form-label small" for="f-orden">Ordenar</label>
+      <select id="f-orden" class="form-select" name="orden">
+        <option value="">Nombre</option>
+        <option value="precio" {% if orden == 'precio' %}selected{% endif %}>Menor precio</option>
+        <option value="-precio" {% if orden == '-precio' %}selected{% endif %}>Mayor precio</option>
+        <option value="nuevos" {% if orden == 'nuevos' %}selected{% endif %}>Más recientes</option>
+      </select></div>
+    <div class="col-4 col-md-2"><button class="btn btn-dl-borde w-100" type="submit">Filtrar</button></div>
+  </form>
+
+  <h2 class="mb-3">{% if categoria_actual %}{{ categoria_actual.nombre }}{% elif q %}Resultados para «{{ q }}»{% else %}Nuestros productos{% endif %}</h2>
+
+  <div class="row g-4">
+    {% for p in pagina %}
+      <div class="col-6 col-md-4 col-lg-3">{% include 'tienda/_producto.html' %}</div>
+    {% empty %}
+      <div class="col-12">
+        <div class="resumen text-center">
+          <p class="mb-2">No encontramos productos con esos criterios.</p>
+          <a class="btn btn-dl-borde" href="{% url 'home' %}">Ver todos los productos</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% if pagina.has_other_pages %}
+  <nav class="d-flex justify-content-center gap-2 mt-4" aria-label="Paginación">
+    {% if pagina.has_previous %}<a class="btn btn-dl-borde" href="?{{ querystring }}&pagina={{ pagina.previous_page_number }}">Anterior</a>{% endif %}
+    <span class="align-self-center">Página {{ pagina.number }} de {{ pagina.paginator.num_pages }}</span>
+    {% if pagina.has_next %}<a class="btn btn-dl-borde" href="?{{ querystring }}&pagina={{ pagina.next_page_number }}">Siguiente</a>{% endif %}
+  </nav>
+  {% endif %}
+</div>
+{% endblock %}

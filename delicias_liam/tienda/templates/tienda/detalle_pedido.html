@@ -1,0 +1,82 @@
+{% extends 'base.html' %}{% load tienda_extras %}
+{% block titulo %}Pedido #{{ pedido.id }} | Delicias Liam{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <h1 class="mb-0">Pedido #{{ pedido.id }}</h1>
+    <span class="estado estado-{{ pedido.estado }} fs-6">{{ pedido.get_estado_display }}</span>
+  </div>
+
+  {% if pedido.estado != 'CANCELADO' %}
+  <ol class="progreso mb-5" aria-label="Avance del pedido">
+    {% for paso in pasos %}
+    <li class="{% if forloop.counter0 < pedido.paso_actual %}hecho{% elif forloop.counter0 == pedido.paso_actual %}actual{% endif %}">{{ paso }}</li>
+    {% endfor %}
+  </ol>
+  {% endif %}
+
+  <div class="row g-4">
+    <div class="col-lg-7">
+      {% if pago and pago.metodo == 'TRANSFERENCIA' and pedido.estado == 'PENDIENTE_PAGO' %}
+      <div class="panel-dl mb-4">
+        {% if pago.estado == 'EN_VERIFICACION' %}
+          <h2 class="h4">Estamos verificando tu pago</h2>
+          <p class="mb-0">Recibimos tu comprobante. Te confirmaremos el pago y empezaremos a preparar tu pedido.</p>
+        {% else %}
+          <h2 class="h4">Paga por transferencia</h2>
+          {% if pago.estado == 'RECHAZADO' %}<div class="alert alert-warning">No pudimos validar el comprobante anterior{% if pago.observacion %}: {{ pago.observacion }}{% endif %}. Sube uno nuevo.</div>{% endif %}
+          <p>Transfiere <strong>{{ pedido.total|cop }}</strong> a: {{ datos_transferencia }}</p>
+          <p class="small text-muted">Si no recibimos el comprobante en {{ horas_limite }} horas, el pedido se cancela y los productos vuelven a estar disponibles.</p>
+          <form method="post" enctype="multipart/form-data">{% csrf_token %}
+            <div class="mb-3"><label class="form-label" for="id_comprobante">{{ form.comprobante.label }}</label>
+              <input class="form-control" type="file" name="comprobante" id="id_comprobante" accept="image/*,.pdf" required>{{ form.comprobante.errors }}</div>
+            <div class="mb-3"><label class="form-label" for="id_referencia">{{ form.referencia.label }}</label>
+              <input class="form-control" type="text" name="referencia" id="id_referencia" maxlength="60"></div>
+            <button class="btn btn-dl" type="submit">Enviar comprobante</button>
+          </form>
+        {% endif %}
+      </div>
+      {% elif pago and pago.metodo == 'CONTRA_ENTREGA' and pedido.estado == 'PENDIENTE_PAGO' %}
+      <div class="panel-dl mb-4"><h2 class="h4">Pago contra entrega</h2>
+        <p class="mb-0">Pagarás {{ pedido.total|cop }} al recibir tu pedido. Te contactaremos para confirmar la entrega.</p></div>
+      {% endif %}
+
+      <div class="panel-dl">
+        <h2 class="h4 mb-3">Productos</h2>
+        {% for d in pedido.detalles.all %}
+        <div class="d-flex justify-content-between border-bottom py-2">
+          <div>{{ d.cantidad }} × {{ d.producto.nombre }}{% if d.mensaje_personalizado %}<div class="small text-muted">Mensaje: «{{ d.mensaje_personalizado }}»</div>{% endif %}</div>
+          <div>{{ d.subtotal|cop }}</div>
+        </div>
+        {% empty %}<p class="text-muted">Pedido registrado con la versión anterior de la tienda (sin detalle de productos).</p>
+        {% endfor %}
+        <div class="d-flex justify-content-between mt-2"><span>Envío</span><span>{% if pedido.costo_envio %}{{ pedido.costo_envio|cop }}{% else %}Por confirmar{% endif %}</span></div>
+        <div class="d-flex justify-content-between fs-5 fw-bold"><span>Total</span><span>{{ pedido.total|cop }}</span></div>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="resumen mb-4">
+        <h2 class="h5">Entrega</h2>
+        <p class="mb-1">{{ pedido.direccion_entrega|default:"—" }}</p>
+        <p class="mb-1">Recibe: {{ pedido.nombre_recibe|default:"—" }} {% if pedido.telefono_contacto %}· {{ pedido.telefono_contacto }}{% endif %}</p>
+        <p class="mb-0">Fecha deseada: {{ pedido.fecha_entrega|date:"d/m/Y"|default:"—" }}</p>
+        {% if pago %}<hr><h2 class="h5">Pago</h2><p class="mb-0">{{ pago.get_metodo_display }}: {{ pago.get_estado_display }}</p>{% endif %}
+      </div>
+      <div class="panel-dl mb-3">
+        <h2 class="h5">Historial</h2>
+        <ul class="list-unstyled small mb-0">
+          {% for h in pedido.historial.all %}<li class="mb-1"><strong>{{ h.get_estado_display }}</strong> · {{ h.fecha|date:"d/m/Y H:i" }}{% if h.comentario %}<br><span class="text-muted">{{ h.comentario }}</span>{% endif %}</li>{% endfor %}
+        </ul>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <a href="{% url 'factura' pedido.id %}" class="btn btn-dl-borde">Descargar comprobante PDF</a>
+        {% if pedido.puede_cancelarse %}
+        <form method="post" action="{% url 'cancelar_pedido' pedido.id %}" onsubmit="return confirm('¿Seguro que quieres cancelar este pedido?');">{% csrf_token %}
+          <button class="btn btn-link text-danger" type="submit">Cancelar pedido</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

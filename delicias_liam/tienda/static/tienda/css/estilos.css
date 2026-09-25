@@ -1,0 +1,97 @@
+/* Delicias Liam — identidad tomada del prototipo: rosa pastel, frambuesa y cacao */
+:root {
+  --dl-frambuesa: #A3245F;
+  --dl-frambuesa-osc: #7E1947;
+  --dl-rosa: #F7C6DC;
+  --dl-rosa-claro: #FDF0F6;
+  --dl-cacao: #3B2420;
+  --dl-gris: #6F5F5C;
+  --dl-verde: #2E7D5B;
+  --bs-body-color: var(--dl-cacao);
+  --bs-link-color: var(--dl-frambuesa);
+  --bs-link-hover-color: var(--dl-frambuesa-osc);
+  --bs-border-radius: .75rem;
+}
+body { font-family: 'Nunito Sans', system-ui, sans-serif; font-size: 1.02rem; line-height: 1.6; background: #fff; }
+h1, h2, h3, h4, .marca, .precio { font-family: 'Baloo 2', 'Nunito Sans', sans-serif; line-height: 1.15; }
+h1 { font-weight: 700; font-size: clamp(2rem, 4.5vw, 3.25rem); letter-spacing: -.01em; }
+h2 { font-weight: 700; font-size: clamp(1.5rem, 3vw, 2rem); }
+a:focus-visible, .btn:focus-visible, .form-control:focus, .form-select:focus, .form-check-input:focus {
+  outline: 3px solid var(--dl-rosa); outline-offset: 2px; box-shadow: none; border-color: var(--dl-frambuesa);
+}
+
+/* Botones */
+.btn-dl { background: var(--dl-frambuesa); color: #fff; border: 0; font-weight: 700; padding: .65rem 1.25rem; border-radius: 999px; }
+.btn-dl:hover, .btn-dl:active { background: var(--dl-frambuesa-osc) !important; color: #fff !important; }
+.btn-dl:disabled { background: #cdb7c0; }
+.btn-dl-borde { border: 2px solid var(--dl-frambuesa); color: var(--dl-frambuesa); border-radius: 999px; font-weight: 700; background: #fff; }
+.btn-dl-borde:hover { background: var(--dl-rosa-claro); color: var(--dl-frambuesa-osc); }
+
+/* Barra superior */
+.barra { background: #fff; border-bottom: 1px solid #f1dde6; }
+.marca { font-size: 1.6rem; font-weight: 800; color: var(--dl-frambuesa); text-decoration: none; }
+.marca span { display: inline-block; width: 2rem; height: 2rem; border-radius: 50%; background: var(--dl-rosa); margin-right: .4rem; vertical-align: -6px;
+  background-image: radial-gradient(circle at 30% 38%, var(--dl-cacao) 16%, transparent 17%), radial-gradient(circle at 70% 38%, var(--dl-cacao) 16%, transparent 17%); }
+.barra .nav-link { color: var(--dl-cacao); font-weight: 600; }
+.barra .nav-link:hover { color: var(--dl-frambuesa); }
+.contador { background: var(--dl-frambuesa); color: #fff; border-radius: 999px; font-size: .75rem; padding: .05rem .45rem; margin-left: .2rem; }
+
+/* Portada: los productos son los protagonistas */
+.portada { background: var(--dl-rosa-claro); }
+.portada p.lead { color: var(--dl-gris); max-width: 34rem; }
+.collage { display: grid; grid-template-columns: 1.3fr 1fr; grid-template-rows: 1fr 1fr; gap: .75rem; height: 100%; min-height: 320px; }
+.collage img { width: 100%; height: 100%; object-fit: cover; border-radius: 1.25rem; }
+.collage img:first-child { grid-row: span 2; border-radius: 1.25rem 1.25rem 1.25rem 4rem; }
+.buscador { max-width: 30rem; }
+.buscador .form-control { border-radius: 999px 0 0 999px; border: 2px solid var(--dl-rosa); padding-left: 1.1rem; }
+.buscador .btn { border-radius: 0 999px 999px 0; }
+
+/* Categorías */
+.chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+.chip { border: 2px solid var(--dl-rosa); border-radius: 999px; padding: .3rem 1rem; color: var(--dl-cacao); text-decoration: none; font-weight: 600; background: #fff; }
+.chip:hover { border-color: var(--dl-frambuesa); color: var(--dl-frambuesa); }
+.chip.activa { background: var(--dl-frambuesa); border-color: var(--dl-frambuesa); color: #fff; }
+
+/* Productos */
+.producto { text-decoration: none; color: inherit; display: block; }
+.producto .foto { aspect-ratio: 4 / 3; border-radius: 1rem; overflow: hidden; background: var(--dl-rosa-claro); position: relative; }
+.producto .foto img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s ease; }
+.producto:hover .foto img { transform: scale(1.04); }
+.producto h3 { font-size: 1.2rem; margin: .6rem 0 .1rem; }
+.producto .cat { color: var(--dl-gris); font-size: .9rem; }
+.precio { color: var(--dl-frambuesa); font-weight: 800; font-size: 1.35rem; }
+.etiqueta { position: absolute; top: .6rem; left: .6rem; background: #fff; color: var(--dl-cacao); font-weight: 700; font-size: .8rem; border-radius: 999px; padding: .15rem .65rem; }
+.etiqueta.agotado { background: var(--dl-cacao); color: #fff; }
+.sin-foto { display: grid; place-items: center; height: 100%; color: var(--dl-frambuesa); font-family: 'Baloo 2', sans-serif; font-size: 1.2rem; }
+
+/* Tarjetas de formulario y resumen */
+.panel-dl { border: 1px solid #f1dde6; border-radius: 1.25rem; padding: 1.5rem; background: #fff; }
+.resumen { background: var(--dl-rosa-claro); border-radius: 1.25rem; padding: 1.5rem; }
+.form-label { font-weight: 600; }
+.errorlist { list-style: none; padding: 0; color: #b3261e; font-size: .9rem; margin: .25rem 0 0; }
+.helptext, .form-text { color: var(--dl-gris); font-size: .85rem; }
+
+/* Progreso del pedido */
+.progreso { display: flex; gap: .25rem; list-style: none; padding: 0; margin: 0; counter-reset: paso; }
+.progreso li { flex: 1; text-align: center; font-size: .85rem; color: var(--dl-gris); position: relative; padding-top: 2.2rem; }
+.progreso li::before { counter-increment: paso; content: counter(paso); position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 1.8rem; height: 1.8rem; border-radius: 50%; background: #f3e6ec; display: grid; place-items: center; font-weight: 700; color: var(--dl-gris); }
+.progreso li.hecho::before { content: '✓'; background: var(--dl-frambuesa); color: #fff; }
+.progreso li.actual { color: var(--dl-cacao); font-weight: 700; }
+.progreso li.actual::before { background: var(--dl-rosa); color: var(--dl-frambuesa-osc); }
+
+.estado { display: inline-block; border-radius: 999px; padding: .1rem .7rem; font-size: .85rem; font-weight: 700; background: #f3e6ec; }
+.estado-PENDIENTE_PAGO { background: #fff1d6; color: #8a5300; }
+.estado-PAGADO, .estado-EN_PREPARACION { background: var(--dl-rosa); color: var(--dl-frambuesa-osc); }
+.estado-ENVIADO { background: #dcefff; color: #0b4f86; }
+.estado-ENTREGADO { background: #dff3e8; color: var(--dl-verde); }
+.estado-CANCELADO { background: #eee; color: #555; }
+
+.pie { background: var(--dl-cacao); color: #f6e9ee; }
+.pie a { color: #fff; }
+.alert { border-radius: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .producto .foto img { transition: none; }
+  .producto:hover .foto img { transform: none; }
+}

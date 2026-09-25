@@ -1,0 +1,10 @@
+{% load tienda_extras %}
+<a class="producto" href="{% url 'producto' p.id %}">
+  <div class="foto">
+    {% if p.imagen %}<img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" loading="lazy">{% else %}<div class="sin-foto">{{ p.nombre }}</div>{% endif %}
+    {% if p.agotado %}<span class="etiqueta agotado">Agotado</span>{% elif p.stock_bajo %}<span class="etiqueta">Últimas {{ p.stock }} unidades</span>{% elif p.personalizable %}<span class="etiqueta">Personalizable</span>{% endif %}
+  </div>
+  <h3>{{ p.nombre }}</h3>
+  {% if p.categoria %}<div class="cat">{{ p.categoria }}</div>{% endif %}
+  <div class="precio">{{ p.precio|cop }}</div>
+</a>

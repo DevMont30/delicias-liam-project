@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block titulo %}Crear cuenta | Delicias Liam{% endblock %}
+{% block contenido %}
+<div class="container mt-5" style="max-width:34rem">
+  <h1 class="mb-2">Crear cuenta</h1>
+  <p class="text-muted mb-4">Con tu cuenta puedes hacer pedidos y seguir su estado.</p>
+  <form method="post" class="panel-dl" novalidate>{% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="row">
+      <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.first_name %}</div>
+      <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.last_name %}</div>
+    </div>
+    {% include 'tienda/_campo.html' with campo=form.email %}
+    <div class="row">
+      <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.telefono %}</div>
+      <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.username %}</div>
+    </div>
+    {% include 'tienda/_campo.html' with campo=form.password1 %}
+    {% include 'tienda/_campo.html' with campo=form.password2 %}
+    {% url 'politica_datos' as url_politica %}
+    {% include 'tienda/_campo.html' with campo=form.acepta_tratamiento_datos extra='(<a href="'|add:url_politica|add:'" target="_blank">leer política</a>)' %}
+    <button class="btn btn-dl w-100" type="submit">Crear cuenta</button>
+    <p class="small mt-3 mb-0 text-center">¿Ya tienes cuenta? <a href="{% url 'login' %}">Ingresa</a></p>
+  </form>
+</div>
+{% endblock %}
