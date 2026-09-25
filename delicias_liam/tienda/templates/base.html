@@ -1,0 +1,72 @@
+{% load static %}<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}Delicias Liam{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="{% static 'tienda/css/estilos.css' %}" rel="stylesheet">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<nav class="navbar navbar-expand-md barra py-2">
+  <div class="container">
+    <a class="marca" href="{% url 'home' %}"><span aria-hidden="true"></span>Delicias Liam</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu" aria-expanded="false" aria-label="Abrir menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto align-items-md-center gap-md-2">
+        <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Productos</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'mis_pedidos' %}">Mis pedidos</a></li>
+          {% if user.is_staff %}<li class="nav-item"><a class="nav-link" href="{% url 'panel' %}">Panel</a></li>{% endif %}
+        {% endif %}
+        <li class="nav-item"><a class="nav-link" href="{% url 'carrito' %}">Carrito{% if carrito_cantidad %}<span class="contador">{{ carrito_cantidad }}</span>{% endif %}</a></li>
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}
+              <button type="submit" class="btn btn-link nav-link">Salir ({{ user.first_name|default:user.username }})</button>
+            </form>
+          </li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Ingresar</a></li>
+          <li class="nav-item"><a class="btn btn-dl btn-sm px-3" href="{% url 'registro' %}">Crear cuenta</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+{% if messages %}
+<div class="container mt-3">
+  {% for m in messages %}
+  <div class="alert alert-{% if m.tags == 'error' %}danger{% elif m.tags %}{{ m.tags }}{% else %}info{% endif %} alert-dismissible fade show" role="alert">
+    {{ m }}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<main class="flex-grow-1">{% block contenido %}{% endblock %}</main>
+
+<footer class="pie mt-5 py-4">
+  <div class="container d-flex flex-column flex-md-row justify-content-between gap-3">
+    <div>
+      <div class="marca text-white mb-1">Delicias Liam</div>
+      <small>Postres y detalles hechos en Bogotá para tus fechas especiales.</small>
+    </div>
+    <div class="d-flex flex-column gap-1">
+      {% if whatsapp %}<a href="https://wa.me/{{ whatsapp }}?text=Hola%20Delicias%20Liam" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>{% endif %}
+      {% if instagram %}<a href="{{ instagram }}" target="_blank" rel="noopener">Síguenos en Instagram</a>{% endif %}
+      <a href="{% url 'politica_datos' %}">Política de tratamiento de datos</a>
+      <a href="{% url 'terminos' %}">Términos y condiciones</a>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

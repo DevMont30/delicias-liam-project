@@ -1,0 +1,51 @@
+{% extends 'base.html' %}{% load tienda_extras %}
+{% block titulo %}Reportes | Delicias Liam{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+  <h1 class="mb-3">Reportes de ventas</h1>
+  <form method="get" class="row g-2 align-items-end mb-4">
+    <div class="col-6 col-md-3"><label class="form-label small" for="id_desde">Desde</label>
+      <input class="form-control" type="date" name="desde" id="id_desde" value="{{ desde|date:'Y-m-d' }}"></div>
+    <div class="col-6 col-md-3"><label class="form-label small" for="id_hasta">Hasta</label>
+      <input class="form-control" type="date" name="hasta" id="id_hasta" value="{{ hasta|date:'Y-m-d' }}"></div>
+    <div class="col-md-2"><button class="btn btn-dl w-100" type="submit">Consultar</button></div>
+  </form>
+  <p class="small text-muted">Se consideran ventas los pedidos pagados, en preparación, enviados o entregados.</p>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="resumen"><div class="small">Ventas del periodo</div><div class="fs-2 fw-bold">{{ resumen.total|default:0|cop }}</div></div></div>
+    <div class="col-md-4"><div class="resumen"><div class="small">Pedidos vendidos</div><div class="fs-2 fw-bold">{{ resumen.cantidad }}</div></div></div>
+    <div class="col-md-4"><div class="resumen"><div class="small">Valor promedio por pedido</div><div class="fs-2 fw-bold">{{ resumen.ticket|cop }}</div></div></div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="panel-dl h-100">
+        <h2 class="h4">Ventas por día</h2>
+        {% for d in por_dia %}
+        <div class="mb-2">
+          <div class="d-flex justify-content-between small"><span>{{ d.dia|date:"d/m/Y" }} ({{ d.n }})</span><span>{{ d.total|cop }}</span></div>
+          <div class="progress" style="height:.5rem" role="progressbar" aria-label="Ventas del {{ d.dia|date:'d/m' }}" aria-valuenow="{{ d.pct }}" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar" style="width: {{ d.pct }}%; background: var(--dl-frambuesa)"></div></div>
+        </div>
+        {% empty %}<p class="text-muted mb-0">Sin ventas en el periodo.</p>{% endfor %}
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="panel-dl mb-4">
+        <h2 class="h4">Productos más vendidos</h2>
+        <table class="table table-sm mb-0"><thead><tr><th>Producto</th><th class="text-end">Unidades</th><th class="text-end">Ventas</th></tr></thead><tbody>
+        {% for t in top %}<tr><td>{{ t.producto__nombre }}</td><td class="text-end">{{ t.unidades }}</td><td class="text-end">{{ t.ventas|cop }}</td></tr>
+        {% empty %}<tr><td colspan="3" class="text-muted">Sin datos.</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+      <div class="panel-dl">
+        <h2 class="h4">Pedidos por estado</h2>
+        <table class="table table-sm mb-0"><tbody>
+        {% for etiqueta, n in estados %}<tr><td>{{ etiqueta }}</td><td class="text-end">{{ n }}</td></tr>{% endfor %}
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

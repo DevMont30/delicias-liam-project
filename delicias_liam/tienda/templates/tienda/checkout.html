@@ -1,0 +1,55 @@
+{% extends 'base.html' %}{% load tienda_extras %}
+{% block titulo %}Finalizar compra | Delicias Liam{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+  <h1 class="mb-4">Finalizar compra</h1>
+  <form method="post" class="row g-4" novalidate>{% csrf_token %}
+    <div class="col-lg-7">
+      {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="panel-dl mb-4">
+        <h2 class="h4 mb-3">Entrega</h2>
+        {% if form.direccion_guardada.field.queryset.exists %}
+          {% include 'tienda/_campo.html' with campo=form.direccion_guardada %}
+          <p class="small text-muted">Si eliges «Usar una dirección nueva», completa los campos siguientes.</p>
+        {% endif %}
+        <div class="row">
+          <div class="col-md-8">{% include 'tienda/_campo.html' with campo=form.direccion %}</div>
+          <div class="col-md-4">{% include 'tienda/_campo.html' with campo=form.barrio %}</div>
+          <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.ciudad %}</div>
+          <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.indicaciones %}</div>
+        </div>
+        {% include 'tienda/_campo.html' with campo=form.guardar_direccion %}
+        <div class="row">
+          <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.nombre_recibe %}</div>
+          <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.telefono_contacto %}</div>
+          <div class="col-md-6">{% include 'tienda/_campo.html' with campo=form.fecha_entrega %}</div>
+        </div>
+        {% include 'tienda/_campo.html' with campo=form.notas %}
+      </div>
+      <div class="panel-dl">
+        <h2 class="h4 mb-3">Pago</h2>
+        {% for opcion in form.metodo_pago %}
+        <div class="form-check mb-2">{{ opcion.tag }}<label class="form-check-label" for="{{ opcion.id_for_label }}">{{ opcion.choice_label }}</label></div>
+        {% endfor %}
+        {{ form.metodo_pago.errors }}
+        <p class="small text-muted mb-0">Si pagas por transferencia, después de confirmar verás los datos de la cuenta y podrás subir el comprobante.</p>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="resumen">
+        <h2 class="h4 mb-3">Tu pedido</h2>
+        {% for l in lineas %}
+        <div class="d-flex justify-content-between small mb-1"><span>{{ l.cantidad }} × {{ l.producto.nombre }}</span><span>{{ l.subtotal|cop }}</span></div>
+        {% if l.mensaje %}<div class="small text-muted mb-1">«{{ l.mensaje }}»</div>{% endif %}
+        {% endfor %}
+        <hr>
+        <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ subtotal|cop }}</span></div>
+        <div class="d-flex justify-content-between"><span>Envío</span><span>{% if envio %}{{ envio|cop }}{% else %}Por confirmar{% endif %}</span></div>
+        <div class="d-flex justify-content-between fs-5 fw-bold mt-2"><span>Total</span><span>{{ total|cop }}</span></div>
+        <button class="btn btn-dl w-100 mt-3" type="submit">Confirmar pedido</button>
+        <p class="small text-muted mt-2 mb-0">Al confirmar aceptas los <a href="{% url 'terminos' %}" target="_blank">términos y condiciones</a>.</p>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}

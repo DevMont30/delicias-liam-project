@@ -1,0 +1,51 @@
+{% extends 'base.html' %}{% load tienda_extras %}
+{% block titulo %}Carrito | Delicias Liam{% endblock %}
+{% block contenido %}
+<div class="container mt-4">
+  <h1 class="mb-4">Tu carrito</h1>
+  {% if lineas %}
+  <div class="row g-4">
+    <div class="col-lg-8">
+      {% for l in lineas %}
+      <div class="d-flex gap-3 align-items-center py-3 border-bottom">
+        <div class="producto" style="width:88px;flex-shrink:0"><div class="foto" style="aspect-ratio:1/1">
+          {% if l.producto.imagen %}<img src="{{ l.producto.imagen.url }}" alt="">{% endif %}</div></div>
+        <div class="flex-grow-1">
+          <a href="{% url 'producto' l.producto.id %}" class="fw-bold text-decoration-none">{{ l.producto.nombre }}</a>
+          <div class="small text-muted">{{ l.producto.precio|cop }} c/u</div>
+          {% if l.mensaje %}<div class="small">Mensaje: «{{ l.mensaje }}»</div>{% endif %}
+        </div>
+        <form method="post" action="{% url 'actualizar' %}" class="d-flex gap-1 align-items-center">{% csrf_token %}
+          <input type="hidden" name="clave" value="{{ l.clave }}">
+          <label class="visually-hidden" for="c{{ forloop.counter }}">Cantidad</label>
+          <input id="c{{ forloop.counter }}" class="form-control form-control-sm" style="width:4.5rem" type="number" name="cantidad" min="0" max="{{ l.producto.stock }}" value="{{ l.cantidad }}">
+          <button class="btn btn-sm btn-dl-borde" type="submit">Actualizar</button>
+        </form>
+        <div class="fw-bold text-end" style="width:6.5rem">{{ l.subtotal|cop }}</div>
+        <form method="post" action="{% url 'eliminar' %}">{% csrf_token %}
+          <input type="hidden" name="clave" value="{{ l.clave }}">
+          <button class="btn btn-sm btn-link text-danger" type="submit">Eliminar</button>
+        </form>
+      </div>
+      {% endfor %}
+      <a href="{% url 'home' %}" class="btn btn-dl-borde mt-3">Seguir comprando</a>
+    </div>
+    <div class="col-lg-4">
+      <div class="resumen">
+        <div class="d-flex justify-content-between"><span>Subtotal</span><span>{{ subtotal|cop }}</span></div>
+        <div class="d-flex justify-content-between"><span>Envío</span><span>{% if envio %}{{ envio|cop }}{% else %}Por confirmar{% endif %}</span></div>
+        <hr>
+        <div class="d-flex justify-content-between fs-5 fw-bold"><span>Total</span><span>{{ total|cop }}</span></div>
+        <a href="{% url 'finalizar' %}" class="btn btn-dl w-100 mt-3">Finalizar compra</a>
+        {% if not user.is_authenticated %}<p class="small text-muted mt-2 mb-0">Te pediremos ingresar o crear una cuenta. Tu carrito se conserva.</p>{% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="resumen text-center">
+    <p class="mb-3">Tu carrito está vacío.</p>
+    <a href="{% url 'home' %}" class="btn btn-dl">Ver productos</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

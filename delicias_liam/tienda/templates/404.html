@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block contenido %}
+<div class="container mt-5 text-center" style="max-width:32rem">
+  <h1 class="mb-3">No encontramos esta página</h1>
+  <p>El enlace puede estar mal escrito o el producto ya no está disponible.</p>
+  <a class="btn btn-dl" href="{% url 'home' %}">Ir a la tienda</a>
+</div>
+{% endblock %}
